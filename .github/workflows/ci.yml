@@ -15,9 +15,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v2
+      - uses: pnpm/action-setup@v4
         with:
-          version: 9
+          version: 10
 
       - uses: actions/setup-node@v4
         with:
@@ -29,8 +29,8 @@ jobs:
       - name: Typecheck Packages
         run: |
           cd packages/types && npx tsc --noEmit
-          cd ../config && npx tsc --noEmit
-          cd ../sdk && npx tsc --noEmit
+          cd $GITHUB_WORKSPACE/packages/config && npx tsc --noEmit
+          cd $GITHUB_WORKSPACE/packages/sdk && npx tsc --noEmit
 
       - name: Typecheck API
         run: cd apps/api && npx tsc --noEmit
@@ -49,9 +49,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v2
+      - uses: pnpm/action-setup@v4
         with:
-          version: 9
+          version: 10
 
       - uses: actions/setup-node@v4
         with:
@@ -78,9 +78,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v2
+      - uses: pnpm/action-setup@v4
         with:
-          version: 9
+          version: 10
 
       - uses: actions/setup-node@v4
         with:
@@ -106,9 +106,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v2
+      - uses: pnpm/action-setup@v4
         with:
-          version: 9
+          version: 10
 
       - uses: actions/setup-node@v4
         with:
