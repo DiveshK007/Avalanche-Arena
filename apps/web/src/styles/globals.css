@@ -1,0 +1,63 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --arena-bg: #0a0a0f;
+  --arena-card: #12121a;
+  --arena-border: #1e1e2e;
+  --arena-accent: #e84142;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--arena-bg);
+  color: #e0e0e0;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--arena-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--arena-border);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #2e2e3e;
+}
+
+/* Glow effects */
+.glow-red {
+  box-shadow: 0 0 15px rgba(232, 65, 66, 0.3);
+}
+.glow-blue {
+  box-shadow: 0 0 15px rgba(74, 158, 255, 0.3);
+}
+.glow-green {
+  box-shadow: 0 0 15px rgba(80, 200, 120, 0.3);
+}
+.glow-gold {
+  box-shadow: 0 0 15px rgba(241, 196, 15, 0.3);
+}
+
+/* XP Bar animation */
+@keyframes xpFill {
+  from { width: 0%; }
+  to { width: var(--xp-width); }
+}
+
+.xp-bar-fill {
+  animation: xpFill 1.5s ease-out forwards;
+}

@@ -1,0 +1,32 @@
+{
+  "name": "avalanche-arena",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Cross-Game Progression & Reputation Protocol for Avalanche",
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "test": "turbo test",
+    "lint": "turbo lint",
+    "typecheck": "turbo typecheck",
+    "clean": "turbo clean",
+    "dev:web": "pnpm --filter @arena/web dev",
+    "dev:api": "pnpm --filter @arena/api dev",
+    "dev:indexer": "pnpm --filter @arena/indexer dev",
+    "build:web": "pnpm --filter @arena/web build",
+    "build:api": "pnpm --filter @arena/api build",
+    "build:contracts": "pnpm --filter @arena/contracts compile",
+    "test:contracts": "pnpm --filter @arena/contracts test",
+    "deploy:local": "pnpm --filter @arena/contracts deploy:local",
+    "deploy:fuji": "pnpm --filter @arena/contracts deploy:fuji",
+    "deploy:mainnet": "pnpm --filter @arena/contracts deploy:mainnet",
+    "verify:fuji": "pnpm --filter @arena/contracts verify:fuji"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "devDependencies": {
+    "turbo": "^2.8.11"
+  }
+}

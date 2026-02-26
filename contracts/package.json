@@ -1,0 +1,30 @@
+{
+  "name": "@arena/contracts",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "test:coverage": "hardhat coverage",
+    "deploy:local": "hardhat run scripts/deploy.ts --network localhost",
+    "deploy:fuji": "hardhat run scripts/deploy.ts --network fuji",
+    "deploy:mainnet": "hardhat run scripts/deploy.ts --network avalanche",
+    "verify": "hardhat run scripts/verify.ts",
+    "verify:fuji": "hardhat run scripts/verify.ts --network fuji",
+    "verify:mainnet": "hardhat run scripts/verify.ts --network avalanche",
+    "update-env": "ts-node scripts/update-env.ts",
+    "node": "hardhat node",
+    "clean": "hardhat clean && rm -rf typechain-types"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+    "@openzeppelin/contracts": "^5.0.1",
+    "@types/chai": "^4.3.20",
+    "@types/node": "^20.11.0",
+    "chai": "^4.5.0",
+    "dotenv": "^16.3.1",
+    "hardhat": "^2.19.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  }
+}

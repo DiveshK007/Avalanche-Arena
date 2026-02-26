@@ -1,0 +1,11 @@
+packages:
+  - contracts
+  - apps/*
+  - packages/*
+
+onlyBuiltDependencies:
+  - bufferutil
+  - esbuild
+  - keccak
+  - secp256k1
+  - utf-8-validate
