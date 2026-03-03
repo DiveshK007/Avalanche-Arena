@@ -6,7 +6,10 @@ import { IdentityCard } from "@/components/IdentityCard";
 import { QuestCard } from "@/components/QuestCard";
 import { usePlayerStats } from "@/lib/hooks";
 import { fetchPlayerQuests, fetchQuests } from "@/lib/api";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { PageTransition, StaggerContainer, StaggerItem } from "@/components/ui/PageTransition";
+import { IdentityCardSkeleton, QuestCardSkeleton } from "@/components/ui/Skeleton";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { AnimatedCounter } from "@/components/ui/AnimatedCounter";
 
 interface QuestData {
   id: number;
@@ -61,28 +64,26 @@ export default function DashboardContent() {
 
   if (!isConnected) {
     return (
-      <div className="max-w-7xl mx-auto px-6 py-24 text-center">
-        <div className="text-6xl mb-6">🎮</div>
-        <h1 className="text-3xl font-bold text-white mb-4">Welcome to Avalanche Arena</h1>
-        <p className="text-gray-400 mb-8 max-w-md mx-auto">
-          Connect your wallet to view your cross-game progression, quest completions, and evolving identity.
-        </p>
-        <ConnectButton />
-      </div>
+      <EmptyState
+        icon="🎮"
+        title="Welcome to Avalanche Arena"
+        description="Connect your wallet to view your cross-game progression, quest completions, and evolving identity."
+      />
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-12">
-      <h1 className="text-3xl font-bold text-white mb-2">Dashboard</h1>
-      <p className="text-gray-500 mb-8">Your cross-game progression overview</p>
+    <PageTransition>
+      <div className="max-w-7xl mx-auto px-6 py-12">
+        <h1 className="text-3xl font-bold text-white mb-2">Dashboard</h1>
+        <p className="text-gray-500 mb-8">Your cross-game progression overview</p>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Identity Card */}
-        <div className="lg:col-span-1">
-          {statsLoading ? (
-            <div className="animate-pulse bg-arena-card rounded-2xl h-64 border border-arena-border" />
-          ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Identity Card */}
+          <div className="lg:col-span-1">
+            {statsLoading ? (
+              <IdentityCardSkeleton />
+            ) : (
             <IdentityCard
               address={address!}
               level={stats?.level ?? 0}
@@ -102,17 +103,19 @@ export default function DashboardContent() {
               <div className="flex items-center justify-between text-sm">
                 <span className="text-gray-400">Total XP</span>
                 <span className="text-white font-medium">
-                  {stats?.xp?.toLocaleString() ?? "—"}
+                  {stats?.xp != null ? <AnimatedCounter value={stats.xp} /> : "—"}
                 </span>
               </div>
               <div className="flex items-center justify-between text-sm">
                 <span className="text-gray-400">Level</span>
-                <span className="text-white font-medium">{stats?.level ?? "—"}</span>
+                <span className="text-white font-medium">
+                  {stats?.level != null ? <AnimatedCounter value={stats.level} /> : "—"}
+                </span>
               </div>
               <div className="flex items-center justify-between text-sm">
                 <span className="text-gray-400">Quests Completed</span>
                 <span className="text-white font-medium">
-                  {stats?.questsCompleted ?? "—"}
+                  {stats?.questsCompleted != null ? <AnimatedCounter value={stats.questsCompleted} /> : "—"}
                 </span>
               </div>
               <div className="flex items-center justify-between text-sm">
@@ -137,10 +140,7 @@ export default function DashboardContent() {
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {Array.from({ length: 4 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="animate-pulse bg-arena-card rounded-xl h-40 border border-arena-border"
-                />
+                <QuestCardSkeleton key={i} />
               ))}
             </div>
           ) : questsWithCompletion.length === 0 ? (
@@ -152,14 +152,17 @@ export default function DashboardContent() {
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {questsWithCompletion.slice(0, 6).map((quest) => (
-                <QuestCard key={quest.id} quest={quest} />
+                <StaggerItem key={quest.id}>
+                  <QuestCard quest={quest} />
+                </StaggerItem>
               ))}
-            </div>
+            </StaggerContainer>
           )}
         </div>
       </div>
     </div>
+    </PageTransition>
   );
 }

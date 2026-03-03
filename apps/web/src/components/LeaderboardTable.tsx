@@ -1,6 +1,7 @@
 "use client";
 
 import { formatAddress, formatXP, getTier, getTierColor } from "@/lib/utils";
+import { motion } from "framer-motion";
 
 interface LeaderboardEntry {
   rank: number;
@@ -37,8 +38,11 @@ export function LeaderboardTable({ entries, highlightAddress }: LeaderboardTable
             const rank = entry.rank || i + 1;
 
             return (
-              <tr
+              <motion.tr
                 key={entry.address}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.03, duration: 0.3 }}
                 className={`
                   border-b border-arena-border/50 transition-colors
                   ${isHighlighted
@@ -78,7 +82,7 @@ export function LeaderboardTable({ entries, highlightAddress }: LeaderboardTable
                 <td className="py-3 px-4 text-right text-gray-400">
                   {entry.quests_completed}
                 </td>
-              </tr>
+              </motion.tr>
             );
           })}
         </tbody>

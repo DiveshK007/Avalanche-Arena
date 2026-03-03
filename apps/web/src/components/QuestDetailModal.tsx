@@ -6,6 +6,8 @@ import { parseAbi, type Hash } from "viem";
 import { toast } from "sonner";
 import { getDifficultyLabel, getDifficultyColor, formatAddress } from "@/lib/utils";
 import { useHasCompletedQuest } from "@/lib/hooks";
+import { fireQuestComplete } from "@/lib/confetti";
+import { motion, AnimatePresence } from "framer-motion";
 
 /**
  * Quest Detail Modal — shows quest info and provides "Play" action
@@ -82,6 +84,8 @@ export function QuestDetailModal({ quest, onClose }: QuestDetailModalProps) {
         description: `TX: ${formatAddress(txHash)}`,
       });
       setAwaitingProof(true);
+      // #3 — Confetti on quest action confirmed
+      fireQuestComplete();
 
       // Poll for completion (indexer picks up event → submits proof → XP awarded)
       const interval = setInterval(async () => {
@@ -126,10 +130,22 @@ export function QuestDetailModal({ quest, onClose }: QuestDetailModalProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+        onClick={onClose}
+      />
 
       {/* Modal */}
-      <div className="relative bg-arena-bg border border-arena-border rounded-2xl max-w-lg w-full p-8 shadow-2xl">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+        transition={{ duration: 0.2 }}
+        className="relative bg-arena-bg border border-arena-border rounded-2xl max-w-lg w-full p-8 shadow-2xl"
+      >
         {/* Close button */}
         <button
           onClick={onClose}
@@ -223,7 +239,7 @@ export function QuestDetailModal({ quest, onClose }: QuestDetailModalProps) {
             </a>
           </div>
         )}
-      </div>
+      </motion.div>
     </div>
   );
 }

@@ -5,6 +5,10 @@ import { useAccount } from "wagmi";
 import { LeaderboardTable } from "@/components/LeaderboardTable";
 import { fetchLeaderboard, fetchGlobalStats } from "@/lib/api";
 import { formatXP } from "@/lib/utils";
+import { PageTransition } from "@/components/ui/PageTransition";
+import { StatCardSkeleton, LeaderboardRowSkeleton } from "@/components/ui/Skeleton";
+import { AnimatedCounter } from "@/components/ui/AnimatedCounter";
+import { motion } from "framer-motion";
 
 interface LeaderboardEntry {
   rank: number;
@@ -59,47 +63,45 @@ export default function LeaderboardContent() {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-12">
-      <h1 className="text-3xl font-bold text-white mb-2">Leaderboard</h1>
-      <p className="text-gray-500 mb-8">
-        Top players across the Avalanche Arena ecosystem
-      </p>
+    <PageTransition>
+      <div className="max-w-7xl mx-auto px-6 py-12">
+        <h1 className="text-3xl font-bold text-white mb-2">Leaderboard</h1>
+        <p className="text-gray-500 mb-8">
+          Top players across the Avalanche Arena ecosystem
+        </p>
 
-      {/* Global Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        {stats.map((stat, i) => (
-          <div
-            key={i}
-            className="bg-arena-card border border-arena-border rounded-xl p-4 text-center"
-          >
-            <div className="text-2xl font-bold text-white">
-              {loading ? (
-                <span className="inline-block w-12 h-6 animate-pulse bg-arena-border rounded" />
-              ) : (
-                stat.value
-              )}
-            </div>
-            <div className="text-xs text-gray-500 mt-1">{stat.label}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* Leaderboard Table */}
-      {loading ? (
-        <div className="bg-arena-card border border-arena-border rounded-xl p-8">
-          <div className="space-y-4">
-            {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="animate-pulse flex gap-4 items-center">
-                <div className="w-8 h-4 bg-arena-border rounded" />
-                <div className="w-32 h-4 bg-arena-border rounded" />
-                <div className="flex-1" />
-                <div className="w-16 h-4 bg-arena-border rounded" />
-                <div className="w-16 h-4 bg-arena-border rounded" />
+        {/* Global Stats */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          {stats.map((stat, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.1 }}
+              className="bg-arena-card border border-arena-border rounded-xl p-4 text-center"
+            >
+              <div className="text-2xl font-bold text-white">
+                {loading ? (
+                  <span className="inline-block w-12 h-6 animate-pulse bg-arena-border rounded" />
+                ) : (
+                  stat.value
+                )}
               </div>
-            ))}
-          </div>
+              <div className="text-xs text-gray-500 mt-1">{stat.label}</div>
+            </motion.div>
+          ))}
         </div>
-      ) : entries.length === 0 ? (
+
+        {/* Leaderboard Table */}
+        {loading ? (
+          <div className="bg-arena-card border border-arena-border rounded-xl p-8">
+            <div className="space-y-4">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <LeaderboardRowSkeleton key={i} />
+              ))}
+            </div>
+          </div>
+        ) : entries.length === 0 ? (
         <div className="text-center py-16 bg-arena-card rounded-xl border border-arena-border">
           <div className="text-4xl mb-3">🏆</div>
           <p className="text-gray-400">No players on the leaderboard yet.</p>
@@ -113,5 +115,6 @@ export default function LeaderboardContent() {
         </div>
       )}
     </div>
+    </PageTransition>
   );
 }

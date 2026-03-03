@@ -3,6 +3,7 @@
 import { useState, useCallback } from "react";
 import { useArenaWebSocket } from "@/lib/websocket";
 import { formatAddress } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
 
 /**
  * LiveFeed — Real-time activity feed powered by WebSocket
@@ -73,18 +74,24 @@ export function LiveFeed() {
           </div>
         ) : (
           <div className="divide-y divide-arena-border/50">
-            {feed.map((item) => (
-              <div
-                key={item.id}
-                className="px-4 py-2.5 flex items-start gap-2 text-sm animate-in fade-in slide-in-from-top duration-300"
-              >
-                <span className="shrink-0">{typeIcons[item.type] || "📌"}</span>
-                <span className="text-gray-300 flex-1">{item.message}</span>
-                <span className="text-xs text-gray-600 shrink-0">
-                  {new Date(item.timestamp).toLocaleTimeString()}
-                </span>
-              </div>
-            ))}
+            <AnimatePresence initial={false}>
+              {feed.map((item) => (
+                <motion.div
+                  key={item.id}
+                  initial={{ opacity: 0, height: 0, y: -10 }}
+                  animate={{ opacity: 1, height: "auto", y: 0 }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="px-4 py-2.5 flex items-start gap-2 text-sm"
+                >
+                  <span className="shrink-0">{typeIcons[item.type] || "📌"}</span>
+                  <span className="text-gray-300 flex-1">{item.message}</span>
+                  <span className="text-xs text-gray-600 shrink-0">
+                    {new Date(item.timestamp).toLocaleTimeString()}
+                  </span>
+                </motion.div>
+              ))}
+            </AnimatePresence>
           </div>
         )}
       </div>

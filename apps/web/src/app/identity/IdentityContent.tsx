@@ -13,6 +13,10 @@ import {
 } from "@/lib/hooks";
 import { getTier, getTierColor } from "@/lib/utils";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { fireMintSuccess } from "@/lib/confetti";
+import { PageTransition } from "@/components/ui/PageTransition";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { motion } from "framer-motion";
 
 const FACTIONS = [
   { name: "Frostborn", color: "#4a9eff", icon: "❄️", desc: "Masters of ice and patience" },
@@ -45,6 +49,7 @@ export default function IdentityContent() {
   // Refetch data after successful mint
   useEffect(() => {
     if (mintSuccess) {
+      fireMintSuccess();
       setTimeout(() => {
         refetchMinted();
         refetchTokenId();
@@ -76,19 +81,17 @@ export default function IdentityContent() {
 
   if (!isConnected) {
     return (
-      <div className="max-w-7xl mx-auto px-6 py-24 text-center">
-        <div className="text-6xl mb-6">🎭</div>
-        <h1 className="text-3xl font-bold text-white mb-4">Your Arena Identity</h1>
-        <p className="text-gray-400 mb-8 max-w-md mx-auto">
-          Connect your wallet to mint, evolve, and manage your on-chain gaming identity.
-        </p>
-        <ConnectButton />
-      </div>
+      <EmptyState
+        icon="🎭"
+        title="Your Arena Identity"
+        description="Connect your wallet to mint, evolve, and manage your on-chain gaming identity."
+      />
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-12">
+    <PageTransition>
+      <div className="max-w-7xl mx-auto px-6 py-12">
       <h1 className="text-3xl font-bold text-white mb-2">Your Identity</h1>
       <p className="text-gray-500 mb-8">
         Your evolving on-chain gaming identity
@@ -308,5 +311,6 @@ export default function IdentityContent() {
         </div>
       </div>
     </div>
+    </PageTransition>
   );
 }

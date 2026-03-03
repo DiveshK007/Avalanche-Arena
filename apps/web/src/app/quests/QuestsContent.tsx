@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import { QuestCard } from "@/components/QuestCard";
 import { fetchQuests, fetchPlayerQuests } from "@/lib/api";
+import { PageTransition, StaggerContainer, StaggerItem } from "@/components/ui/PageTransition";
+import { QuestCardSkeleton } from "@/components/ui/Skeleton";
+import { motion } from "framer-motion";
 
 const DIFFICULTY_FILTERS = [
   { label: "All", value: 0 },
@@ -62,70 +65,78 @@ export default function QuestsContent() {
     .filter((q) => activeFilter === 0 || q.difficulty === activeFilter);
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-12">
-      <h1 className="text-3xl font-bold text-white mb-2">Quest Feed</h1>
-      <p className="text-gray-500 mb-8">
-        Discover quests across the Avalanche gaming ecosystem
-      </p>
+    <PageTransition>
+      <div className="max-w-7xl mx-auto px-6 py-12">
+        <h1 className="text-3xl font-bold text-white mb-2">Quest Feed</h1>
+        <p className="text-gray-500 mb-8">
+          Discover quests across the Avalanche gaming ecosystem
+        </p>
 
-      {/* Filters */}
-      <div className="flex gap-3 mb-8 flex-wrap">
-        {DIFFICULTY_FILTERS.map((filter) => (
-          <button
-            key={filter.label}
-            onClick={() => setActiveFilter(filter.value)}
-            className={`px-4 py-2 rounded-lg text-sm border transition-colors
-              ${activeFilter === filter.value
-                ? "bg-arena-accent text-white border-arena-accent"
-                : "bg-arena-card text-gray-400 border-arena-border hover:border-gray-500"
-              }
-            `}
+        {/* Filters — #8 Quest Difficulty Filter Pills */}
+        <div className="flex gap-3 mb-8 flex-wrap">
+          {DIFFICULTY_FILTERS.map((filter) => (
+            <motion.button
+              key={filter.label}
+              onClick={() => setActiveFilter(filter.value)}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className={`px-4 py-2 rounded-lg text-sm border transition-colors
+                ${activeFilter === filter.value
+                  ? "bg-arena-accent text-white border-arena-accent"
+                  : "bg-arena-card text-gray-400 border-arena-border hover:border-gray-500"
+                }
+              `}
+            >
+              {filter.label}
+              {filter.value > 0 && (
+                <span className="ml-1 text-xs opacity-60">
+                  ({quests.filter((q) => q.difficulty === filter.value).length})
+                </span>
+              )}
+            </motion.button>
+          ))}
+        </div>
+
+        {/* Quest Grid */}
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <QuestCardSkeleton key={i} />
+            ))}
+          </div>
+        ) : filteredQuests.length === 0 ? (
+          <div className="text-center py-16 bg-arena-card rounded-xl border border-arena-border">
+            <div className="text-4xl mb-3">📜</div>
+            <p className="text-gray-400">
+              {activeFilter > 0
+                ? "No quests match this difficulty filter."
+                : "No quests available yet. Deploy contracts to get started!"}
+            </p>
+          </div>
+        ) : (
+          <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filteredQuests.map((quest) => (
+              <StaggerItem key={quest.id}>
+                <QuestCard quest={quest} />
+              </StaggerItem>
+            ))}
+          </StaggerContainer>
+        )}
+
+        {/* Stats bar */}
+        {!loading && quests.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            className="mt-8 flex items-center justify-center gap-8 text-sm text-gray-500"
           >
-            {filter.label}
-            {filter.value > 0 && (
-              <span className="ml-1 text-xs opacity-60">
-                ({quests.filter((q) => q.difficulty === filter.value).length})
-              </span>
-            )}
-          </button>
-        ))}
+            <span>{quests.length} total quests</span>
+            <span>{completedIds.size} completed</span>
+            <span>{quests.length - completedIds.size} remaining</span>
+          </motion.div>
+        )}
       </div>
-
-      {/* Quest Grid */}
-      {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <div
-              key={i}
-              className="animate-pulse bg-arena-card rounded-xl h-44 border border-arena-border"
-            />
-          ))}
-        </div>
-      ) : filteredQuests.length === 0 ? (
-        <div className="text-center py-16 bg-arena-card rounded-xl border border-arena-border">
-          <div className="text-4xl mb-3">📜</div>
-          <p className="text-gray-400">
-            {activeFilter > 0
-              ? "No quests match this difficulty filter."
-              : "No quests available yet. Deploy contracts to get started!"}
-          </p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredQuests.map((quest) => (
-            <QuestCard key={quest.id} quest={quest} />
-          ))}
-        </div>
-      )}
-
-      {/* Stats bar */}
-      {!loading && quests.length > 0 && (
-        <div className="mt-8 flex items-center justify-center gap-8 text-sm text-gray-500">
-          <span>{quests.length} total quests</span>
-          <span>{completedIds.size} completed</span>
-          <span>{quests.length - completedIds.size} remaining</span>
-        </div>
-      )}
-    </div>
+    </PageTransition>
   );
 }

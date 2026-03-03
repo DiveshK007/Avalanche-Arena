@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { getDifficultyLabel, getDifficultyColor } from "@/lib/utils";
 import { QuestDetailModal } from "./QuestDetailModal";
+import { motion } from "framer-motion";
 
 interface QuestCardProps {
   quest: {
@@ -26,13 +27,16 @@ export function QuestCard({ quest }: QuestCardProps) {
 
   return (
     <>
-      <div
+      <motion.div
         onClick={() => setShowDetail(true)}
+        whileHover={{ y: -4, scale: 1.01 }}
+        whileTap={{ scale: 0.98 }}
+        transition={{ type: "spring", stiffness: 400, damping: 25 }}
         className={`
           relative p-5 rounded-xl border transition-all duration-300 cursor-pointer
           ${quest.completed
             ? "bg-arena-card/50 border-arena-green/30"
-            : "bg-arena-card border-arena-border hover:border-arena-accent/50 hover:shadow-lg hover:-translate-y-0.5"
+            : "bg-arena-card border-arena-border hover:border-arena-accent/50 hover:shadow-lg"
           }
         `}
       >
@@ -80,10 +84,12 @@ export function QuestCard({ quest }: QuestCardProps) {
           </div>
 
           {!quest.completed && (
-            <span className="text-xs text-gray-600">Click to play →</span>
+            <span className="text-xs text-gray-600 group-hover:text-gray-400 transition-colors">
+              Click to play →
+            </span>
           )}
         </div>
-      </div>
+      </motion.div>
 
       {/* Detail Modal */}
       {showDetail && (

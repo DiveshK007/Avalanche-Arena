@@ -5,6 +5,11 @@ import { useEffect, useState } from "react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { CHAIN_CONFIG } from "@/lib/contracts";
 import { toast } from "sonner";
+import { fireAchievementUnlocked } from "@/lib/confetti";
+import { PageTransition, StaggerContainer, StaggerItem } from "@/components/ui/PageTransition";
+import { AchievementCardSkeleton } from "@/components/ui/Skeleton";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { motion } from "framer-motion";
 
 /**
  * Achievements Page (#29)
@@ -55,6 +60,7 @@ export default function AchievementsContent() {
       });
       const data = await res.json();
       if (data.success && data.data.newAchievements.length > 0) {
+        fireAchievementUnlocked();
         for (const a of data.data.newAchievements) {
           toast.success(`🏆 Achievement Unlocked: ${a.title}`);
         }
@@ -76,19 +82,17 @@ export default function AchievementsContent() {
 
   if (!isConnected) {
     return (
-      <div className="max-w-7xl mx-auto px-6 py-24 text-center">
-        <div className="text-6xl mb-6">🏆</div>
-        <h1 className="text-3xl font-bold text-white mb-4">Achievements</h1>
-        <p className="text-gray-400 mb-8 max-w-md mx-auto">
-          Connect your wallet to view your achievements.
-        </p>
-        <ConnectButton />
-      </div>
+      <EmptyState
+        icon="🏆"
+        title="Achievements"
+        description="Connect your wallet to view your achievements."
+      />
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-12">
+    <PageTransition>
+      <div className="max-w-7xl mx-auto px-6 py-12">
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold text-white mb-2">Achievements</h1>
@@ -116,7 +120,7 @@ export default function AchievementsContent() {
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="animate-pulse bg-arena-card rounded-xl h-32 border border-arena-border" />
+            <AchievementCardSkeleton key={i} />
           ))}
         </div>
       ) : (
@@ -174,5 +178,6 @@ export default function AchievementsContent() {
         </>
       )}
     </div>
+    </PageTransition>
   );
 }

@@ -4,12 +4,36 @@
 
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap');
 
+/* UX #20 — Dark/Light Theme Polish */
 :root {
   --arena-bg: #0a0a0f;
   --arena-card: #12121a;
   --arena-border: #1e1e2e;
   --arena-accent: #e84142;
 }
+
+/* Light mode overrides */
+.light {
+  --arena-bg: #f5f5f7;
+  --arena-card: #ffffff;
+  --arena-border: #e0e0e5;
+  --arena-accent: #e84142;
+}
+
+.light body,
+.light {
+  color: #1a1a2e;
+}
+
+.light .bg-arena-bg { background-color: var(--arena-bg) !important; }
+.light .bg-arena-card { background-color: var(--arena-card) !important; }
+.light .border-arena-border { border-color: var(--arena-border) !important; }
+.light .text-white { color: #1a1a2e !important; }
+.light .text-gray-200 { color: #2e2e3e !important; }
+.light .text-gray-300 { color: #3e3e4e !important; }
+.light .text-gray-400 { color: #555 !important; }
+.light .text-gray-500 { color: #777 !important; }
+.light .text-gray-600 { color: #999 !important; }
 
 * {
   margin: 0;
@@ -21,6 +45,10 @@ body {
   background-color: var(--arena-bg);
   color: #e0e0e0;
   font-family: 'JetBrains Mono', monospace;
+}
+
+.light body {
+  color: #1a1a2e;
 }
 
 /* Scrollbar styling */
@@ -60,4 +88,39 @@ body {
 
 .xp-bar-fill {
   animation: xpFill 1.5s ease-out forwards;
+}
+
+/* UX #23 — Lazy loading fade-in for images */
+img[loading="lazy"] {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+img[loading="lazy"].loaded,
+img.loaded {
+  opacity: 1;
+}
+
+/* UX #18 — Mobile bottom bar safe area */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* Smooth focus styles for accessibility */
+:focus-visible {
+  outline: 2px solid var(--arena-accent);
+  outline-offset: 2px;
+}
+
+/* UX #16 — Enhanced toast animations */
+[data-sonner-toaster] [data-sonner-toast] {
+  transition: all 0.3s ease;
+}
+
+/* Selection color */
+::selection {
+  background: rgba(232, 65, 66, 0.3);
+  color: white;
 }
