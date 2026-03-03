@@ -30,10 +30,31 @@ export default function RootLayout({
             </main>
 
             {/* Footer */}
-            <footer className="border-t border-arena-border mt-20 py-8 pb-20 md:pb-8">
-              <div className="max-w-7xl mx-auto px-6 text-center text-gray-600 text-sm">
-                <p>🔺 Avalanche Arena — Cross-Game Progression Protocol</p>
-                <p className="mt-1">Built on Avalanche C-Chain</p>
+            <footer className="border-t border-arena-border/50 mt-20 py-12 pb-24 md:pb-12 relative overflow-hidden">
+              {/* Subtle gradient */}
+              <div className="absolute inset-0 bg-gradient-to-t from-arena-accent/[0.02] to-transparent pointer-events-none" />
+              <div className="max-w-7xl mx-auto px-6 relative">
+                <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                  <div className="flex items-center gap-3">
+                    <span className="text-xl">🔺</span>
+                    <div>
+                      <div className="text-sm font-medium text-white">Avalanche Arena</div>
+                      <div className="text-xs text-gray-500">Cross-Game Progression Protocol</div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-6 text-xs text-gray-500">
+                    <span>Built on Avalanche C-Chain</span>
+                    <span className="w-1 h-1 rounded-full bg-arena-border" />
+                    <a
+                      href="https://github.com/DiveshK007/Avalanche-Arena"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:text-arena-accent transition-colors"
+                    >
+                      GitHub ↗
+                    </a>
+                  </div>
+                </div>
               </div>
             </footer>
           </LayoutShell>

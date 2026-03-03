@@ -1,6 +1,6 @@
-"use client";
-
 import dynamic from "next/dynamic";
+
+export const revalidate = 0;
 
 const DashboardContent = dynamic(() => import("./DashboardContent"), {
   ssr: false,
