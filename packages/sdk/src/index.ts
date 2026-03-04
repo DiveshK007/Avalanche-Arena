@@ -214,6 +214,110 @@ export class ArenaSDK {
     }
   }
 
+  // ── Cross-Chain (ICM) Methods ──────────
+
+  /**
+   * Get cross-chain quest completion stats
+   */
+  async getCrossChainStats(): Promise<{
+    totalCompletions: number;
+    totalXPSynced: number;
+    registeredChains: number;
+  } | null> {
+    return this.request<{
+      totalCompletions: number;
+      totalXPSynced: number;
+      registeredChains: number;
+    }>("/cross-chain/stats");
+  }
+
+  /**
+   * Get all registered game chains
+   */
+  async getRegisteredChains(): Promise<Array<{
+    chainId: string;
+    name: string;
+    completionsCount: number;
+    active: boolean;
+  }>> {
+    return (await this.request<any[]>("/cross-chain/chains")) ?? [];
+  }
+
+  /**
+   * Get cross-chain quest completions for a player
+   */
+  async getCrossChainCompletions(address: string): Promise<Array<{
+    questId: number;
+    sourceChain: string;
+    txHash: string;
+    timestamp: number;
+  }>> {
+    return (await this.request<any[]>(`/cross-chain/completions/${address.toLowerCase()}`)) ?? [];
+  }
+
+  /**
+   * Get Teleporter message status (ICM tracking)
+   */
+  async getTeleporterMessageStatus(messageId: string): Promise<{
+    status: string;
+    sourceChain: string;
+    destinationChain: string;
+    timestamp: number;
+  } | null> {
+    return this.request<any>(`/cross-chain/message/${messageId}`);
+  }
+
+  // ── Reputation Token (ICTT) Methods ────
+
+  /**
+   * Get player's ART (Arena Reputation Token) balance
+   */
+  async getReputationBalance(address: string): Promise<{
+    balance: string;
+    lifetimeReputation: string;
+  } | null> {
+    return this.request<{
+      balance: string;
+      lifetimeReputation: string;
+    }>(`/reputation/${address.toLowerCase()}`);
+  }
+
+  /**
+   * Get reputation token info
+   */
+  async getReputationTokenInfo(): Promise<{
+    name: string;
+    symbol: string;
+    totalSupply: string;
+    maxSupply: string;
+  } | null> {
+    return this.request<any>("/reputation/info");
+  }
+
+  // ── Price Feed Methods ─────────────────
+
+  /**
+   * Get current AVAX/USD price from Chainlink
+   */
+  async getAvaxPrice(): Promise<{
+    price: number;
+    decimals: number;
+    updatedAt: number;
+  } | null> {
+    return this.request<{
+      price: number;
+      decimals: number;
+      updatedAt: number;
+    }>("/price/avax-usd");
+  }
+
+  /**
+   * Convert AVAX amount to USD
+   */
+  async avaxToUsd(avaxAmount: string): Promise<{ usd: string } | null> {
+    return this.request<{ usd: string }>(`/price/convert?from=avax&amount=${avaxAmount}`);
+  }
+
   // ── Utility ────────────────────────────
 
   /**

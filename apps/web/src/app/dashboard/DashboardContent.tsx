@@ -10,6 +10,9 @@ import { PageTransition, StaggerContainer, StaggerItem } from "@/components/ui/P
 import { IdentityCardSkeleton, QuestCardSkeleton } from "@/components/ui/Skeleton";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { AnimatedCounter } from "@/components/ui/AnimatedCounter";
+import CrossChainDashboard from "@/components/CrossChainDashboard";
+import ReputationTokenCard from "@/components/ReputationTokenCard";
+import PriceFeedWidget from "@/components/PriceFeedWidget";
 
 interface QuestData {
   id: number;
@@ -162,6 +165,17 @@ export default function DashboardContent() {
           )}
         </div>
       </div>
+
+        {/* Cross-Chain & Token Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-10">
+          <div className="lg:col-span-2">
+            <CrossChainDashboard />
+          </div>
+          <div className="space-y-6">
+            <ReputationTokenCard />
+            <PriceFeedWidget />
+          </div>
+        </div>
     </div>
     </PageTransition>
   );

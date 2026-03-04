@@ -12,6 +12,7 @@ import { motion, AnimatePresence } from "framer-motion";
 const NAV_LINKS = [
   { href: "/dashboard", label: "Dashboard", icon: "📊" },
   { href: "/quests", label: "Quests", icon: "📜" },
+  { href: "/cross-chain", label: "Cross-Chain", icon: "🌐" },
   { href: "/leaderboard", label: "Leaderboard", icon: "🏆" },
   { href: "/identity", label: "Identity", icon: "🎭" },
   { href: "/achievements", label: "Achievements", icon: "🏅" },

@@ -130,6 +130,51 @@ async function main() {
   console.log("  ArenaMarketplace:", marketplaceAddr);
 
   // ──────────────────────────────────────────
+  // 10. Deploy CrossChainQuestVerifier (ICM)
+  // ──────────────────────────────────────────
+  console.log("\n🌉 Deploying CrossChainQuestVerifier (ICM)...");
+  const CrossChainQuestVerifier = await ethers.getContractFactory("CrossChainQuestVerifier");
+  const crossChainVerifier = await CrossChainQuestVerifier.deploy();
+  await crossChainVerifier.waitForDeployment();
+  const crossChainVerifierAddr = await crossChainVerifier.getAddress();
+  console.log("  CrossChainQuestVerifier:", crossChainVerifierAddr);
+
+  // Wire CrossChainQuestVerifier
+  await crossChainVerifier.setRewardEngine(rewardEngineAddr);
+  console.log("  CrossChainVerifier → RewardEngine ✓");
+  await crossChainVerifier.setPlayerProgress(playerProgressAddr);
+  console.log("  CrossChainVerifier → PlayerProgress ✓");
+
+  // ──────────────────────────────────────────
+  // 11. Deploy ArenaReputationToken (ICTT)
+  // ──────────────────────────────────────────
+  console.log("\n🪙 Deploying ArenaReputationToken (ICTT)...");
+  const ArenaReputationToken = await ethers.getContractFactory("ArenaReputationToken");
+  const reputationToken = await ArenaReputationToken.deploy();
+  await reputationToken.waitForDeployment();
+  const reputationTokenAddr = await reputationToken.getAddress();
+  console.log("  ArenaReputationToken:", reputationTokenAddr);
+
+  // Set RewardEngine as minter
+  await reputationToken.addMinter(rewardEngineAddr);
+  console.log("  ART Minter → RewardEngine ✓");
+  // Set CrossChainVerifier as minter too
+  await reputationToken.addMinter(crossChainVerifierAddr);
+  console.log("  ART Minter → CrossChainVerifier ✓");
+
+  // ──────────────────────────────────────────
+  // 12. Deploy ArenaPriceFeed (Chainlink)
+  // ──────────────────────────────────────────
+  console.log("\n📈 Deploying ArenaPriceFeed (Chainlink)...");
+  const avaxUsdFeed = process.env.CHAINLINK_AVAX_USD_FEED || "0x5498BB86BC934c8D34FDA08E81D444153d0D06aD";
+  const ArenaPriceFeed = await ethers.getContractFactory("ArenaPriceFeed");
+  const priceFeed = await ArenaPriceFeed.deploy(avaxUsdFeed);
+  await priceFeed.waitForDeployment();
+  const priceFeedAddr = await priceFeed.getAddress();
+  console.log("  ArenaPriceFeed:", priceFeedAddr);
+  console.log("  AVAX/USD Feed:", avaxUsdFeed);
+
+  // ──────────────────────────────────────────
   // 10. Create Sample Quests
   // ──────────────────────────────────────────
   console.log("\n📝 Creating sample quests...");
@@ -172,30 +217,57 @@ async function main() {
   console.log("🔺 AVALANCHE ARENA — Deployment Complete");
   console.log("═".repeat(50));
   console.log(`
-  QuestRegistry:     ${questRegistryAddr}
-  PlayerProgress:    ${playerProgressAddr}
-  IdentityNFT:       ${identityNFTAddr}
-  RewardEngine:      ${rewardEngineAddr}
-  ProofValidator:    ${proofValidatorAddr}
-  MockGame:          ${mockGameAddr}
-  ArenaGovernance:   ${governanceAddr}
-  ArenaMarketplace:  ${marketplaceAddr}
-  Trusted Signer:    ${trustedSignerAddress}
+  ── Core Contracts ──
+  QuestRegistry:          ${questRegistryAddr}
+  PlayerProgress:         ${playerProgressAddr}
+  IdentityNFT:            ${identityNFTAddr}
+  RewardEngine:           ${rewardEngineAddr}
+  ProofValidator:         ${proofValidatorAddr}
+  MockGame:               ${mockGameAddr}
+
+  ── Governance & Market ──
+  ArenaGovernance:        ${governanceAddr}
+  ArenaMarketplace:       ${marketplaceAddr}
+
+  ── Cross-Chain (ICM) ──
+  CrossChainQuestVerifier: ${crossChainVerifierAddr}
+  TeleporterMessenger:     0x253b2784c75e510dD0fF1da844684a1aC0aa5fcf
+
+  ── Token (ICTT) ──
+  ArenaReputationToken:   ${reputationTokenAddr}
+
+  ── Chainlink ──
+  ArenaPriceFeed:         ${priceFeedAddr}
+
+  ── Config ──
+  Trusted Signer:         ${trustedSignerAddress}
   `);
 
   // Write addresses to JSON for other services
   const fs = require("fs");
+  const network = await deployer.provider.getNetwork();
   const addresses = {
+    // Core
     questRegistry: questRegistryAddr,
     playerProgress: playerProgressAddr,
     identityNFT: identityNFTAddr,
     rewardEngine: rewardEngineAddr,
     proofValidator: proofValidatorAddr,
     mockGame: mockGameAddr,
+    // Governance & Market
     governance: governanceAddr,
     marketplace: marketplaceAddr,
+    // Cross-Chain (ICM)
+    crossChainQuestVerifier: crossChainVerifierAddr,
+    teleporterMessenger: "0x253b2784c75e510dD0fF1da844684a1aC0aa5fcf",
+    // Token (ICTT)
+    arenaReputationToken: reputationTokenAddr,
+    // Chainlink
+    arenaPriceFeed: priceFeedAddr,
+    chainlinkAvaxUsdFeed: avaxUsdFeed,
+    // Meta
     trustedSigner: trustedSignerAddress,
-    chainId: (await ethers.provider.getNetwork()).chainId.toString(),
+    chainId: network.chainId.toString(),
     deployedAt: new Date().toISOString(),
   };
 
