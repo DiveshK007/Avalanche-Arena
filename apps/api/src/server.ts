@@ -71,14 +71,17 @@ app.use((err: Error, _req: express.Request, res: express.Response, _next: expres
 const server = createServer(app);
 initWebSocket(server);
 
-server.listen(PORT, () => {
-  console.log("═".repeat(50));
-  console.log(`🔺 Arena API v0.2.0 running on http://localhost:${PORT}`);
-  console.log(`   Auth:     SIWE + JWT`);
-  console.log(`   Cache:    Redis`);
-  console.log(`   Limits:   100 req/min`);
-  console.log(`   WebSocket: ws://localhost:${PORT}/ws`);
-  console.log("═".repeat(50));
-});
+// Only listen if not running in Vercel serverless environment
+if (!process.env.VERCEL) {
+  server.listen(PORT, () => {
+    console.log("═".repeat(50));
+    console.log(`🔺 Arena API v0.2.0 running on http://localhost:${PORT}`);
+    console.log(`   Auth:     SIWE + JWT`);
+    console.log(`   Cache:    Redis`);
+    console.log(`   Limits:   100 req/min`);
+    console.log(`   WebSocket: ws://localhost:${PORT}/ws`);
+    console.log("═".repeat(50));
+  });
+}
 
 export default app;
